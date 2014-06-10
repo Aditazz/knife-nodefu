@@ -23,6 +23,12 @@ class NodefuCreate < Chef::Knife
          :description => "The node spec to use",
          :default => nil
 
+  option :hostname_format,
+         :short => "-f",
+         :long => "--hostname_format",
+         :description => "The pattern for generated hostnames",
+         :default => nil
+  
   option :yes,
          :short => "-y",
          :long => "--yes",
@@ -110,7 +116,11 @@ class NodefuCreate < Chef::Knife
     for i in (start_range..end_range)
       ec2_server_request = Ec2ServerCreate.new
       node_name = "#{base_name}#{i}"
-      full_node_name  = "#{node_name}.#{env}.#{domain}"
+      
+      # add support for passing in the formatter for full_node_name
+      full_node_name  = Chef::Config[:nodefu_hostname_format].to_s || "#{node_name}.#{env}.#{domain}"
+      
+      
       security_groups = if config[:disable_default_groups]
                           aux_groups
                         else
