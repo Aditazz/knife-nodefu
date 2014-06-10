@@ -118,7 +118,7 @@ class NodefuCreate < Chef::Knife
       node_name = "#{base_name}#{i}"
       
       # add support for passing in the formatter for full_node_name
-      full_node_name  = eval(Chef::Config[:nodefu_hostname_format]) || "#{node_name}.#{env}.#{domain}"
+      full_node_name  = String.interpolate{Chef::Config[:nodefu_hostname_format]} || "#{node_name}.#{env}.#{domain}"
       
       
       security_groups = if config[:disable_default_groups]
